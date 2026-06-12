@@ -2,7 +2,6 @@ name: 🐦 Post Twitter Thread
 
 on:
   workflow_dispatch:
-    description: '手动触发发推'
 
 jobs:
   thread:
@@ -14,49 +13,13 @@ jobs:
         with:
           node-version: '20'
 
-      - run: npm install twitter-api-v2
+      - name: Install dependencies
+        run: npm install twitter-api-v2
 
       - name: Post Thread
-        shell: node
+        run: node .github/scripts/tweet-thread.js
         env:
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
           TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
           TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
           TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }}
-        script: |
-          const { TwitterApi } = require('twitter-api-v2');
-
-          const client = new TwitterApi({
-            appKey: process.env.TWITTER_API_KEY,
-            appSecret: process.env.TWITTER_API_SECRET,
-            accessToken: process.env.TWITTER_ACCESS_TOKEN,
-            accessSecret: process.env.TWITTER_ACCESS_SECRET,
-          });
-
-          const THREAD = [
-            `Your AI writes like a LinkedIn influencer and everyone can tell.\n\n82% of creators use AI daily.\n76% of readers spot AI slop in under 3 seconds.\n\nI built a skill that fixes this:\ngithub.com/tomerose/stop-slop`,
-
-            `The original stop-slop teaches Claude to kill its own writing tells:\n\n• Throat-clearing openers\n• "Not X. But Y." contrasts\n• All adverbs\n• Vague declaratives\n\nOne markdown file. Zero code. 9,200 stars.`,
-
-            `Chinese AI writing is worse:\n\n"在当今快速变化的时代..."\n"不仅仅是...更是..."\n四字成语 ×3 per paragraph\n\nSo I added 12 Chinese-specific anti-patterns. First bilingual version.`,
-
-            `How it works:\n\n1. You write with Claude\n2. Skill auto-scores on 5 dimensions\n3. Score < 35/50 → rewrite\n4. Deliver at 45+\n\nPrevention over detection.`,
-
-            `MIT. Free. 1 minute install:\n\ngit clone https://github.com/tomerose/stop-slop.git ~/.claude/skills/stop-slop\n\nIf it saves you an hour of editing, drop a ⭐`,
-          ];
-
-          async function postThread() {
-            let replyTo = null;
-            for (const tweet of THREAD) {
-              const options = replyTo ? { reply: { in_reply_to_tweet_id: replyTo } } : {};
-              const result = await client.v2.tweet(tweet, options);
-              replyTo = result.data.id;
-              console.log(`✅ Tweet ${replyTo} posted`);
-            }
-            console.log(`\n🎉 Thread complete! ${THREAD.length} tweets.`);
-          }
-
-          postThread().catch(e => {
-            console.error('❌ Failed:', e);
-            process.exit(1);
-          });
