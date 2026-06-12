@@ -1,4 +1,4 @@
-// Post stop-slop thread to Twitter
+// Post stop-slop thread to Twitter via API v2
 const { TwitterApi } = require('twitter-api-v2');
 
 const THREAD = [
@@ -51,20 +51,19 @@ async function main() {
     accessSecret: process.env.TWITTER_ACCESS_SECRET.trim(),
   });
 
-  // Verify
+  // Verify credentials
   const me = await client.v1.verifyCredentials();
   console.log(`✅ Authenticated as @${me.screen_name}`);
 
-  // Post thread using v1 statuses/update
+  // Post thread using v2 API
   let replyTo = null;
   for (let i = 0; i < THREAD.length; i++) {
-    const payload = { status: THREAD[i] };
-    if (replyTo) {
-      payload.in_reply_to_status_id = replyTo;
-    }
+    const options = replyTo
+      ? { reply: { in_reply_to_tweet_id: replyTo } }
+      : {};
 
-    const result = await client.v1.post('statuses/update.json', payload);
-    replyTo = result.id_str;
+    const result = await client.v2.tweet(THREAD[i], options);
+    replyTo = result.data.id;
     console.log(`✅ ${i + 1}/${THREAD.length}: https://x.com/hyfind1015/status/${replyTo}`);
   }
 
@@ -72,6 +71,6 @@ async function main() {
 }
 
 main().catch(e => {
-  console.error('❌', e.data?.errors || e.message);
+  console.error('❌', e.data?.detail || e.data?.errors || e.message);
   process.exit(1);
 });
