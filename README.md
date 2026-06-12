@@ -149,10 +149,22 @@ stop-slop/
 
 ## 支持作者
 
-如果这个 skill 帮你省了改稿时间：
+如果这个 skill 帮你省了改稿时间，请我喝杯咖啡 ☕
+
+<div align="center">
+<table>
+  <tr>
+    <td align="center"><b>微信赞赏</b></td>
+    <td align="center"><b>支付宝</b></td>
+  </tr>
+  <tr>
+    <td><img src="assets/wechat-pay.jpg" width="200" alt="微信赞赏码"></td>
+    <td><img src="assets/alipay.jpg" width="200" alt="支付宝收款码"></td>
+  </tr>
+</table>
+</div>
 
 - **GitHub Sponsors**: [赞助](https://github.com/sponsors/tomerose)
-- **微信/支付宝**: 发送邮件到 portelamicheli636@gmail.com 获取收款码
 - **Star this repo**: 不花钱，点个 Star 就是最大支持 ⭐
 
 ---
