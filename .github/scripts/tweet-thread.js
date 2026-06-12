@@ -1,4 +1,4 @@
-// Post stop-slop thread to Twitter via API v2
+// Post stop-slop thread to Twitter — uses v1.1 for Free tier compatibility
 const { TwitterApi } = require('twitter-api-v2');
 
 const THREAD = [
@@ -44,25 +44,43 @@ If it saves you an hour of editing, drop a ⭐`,
 ];
 
 async function main() {
+  // Try OAuth 1.0a with user context
   const client = new TwitterApi({
-    appKey: process.env.TWITTER_API_KEY,
-    appSecret: process.env.TWITTER_API_SECRET,
-    accessToken: process.env.TWITTER_ACCESS_TOKEN,
-    accessSecret: process.env.TWITTER_ACCESS_SECRET,
+    appKey: process.env.TWITTER_API_KEY?.trim(),
+    appSecret: process.env.TWITTER_API_SECRET?.trim(),
+    accessToken: process.env.TWITTER_ACCESS_TOKEN?.trim(),
+    accessSecret: process.env.TWITTER_ACCESS_SECRET?.trim(),
   });
 
+  // Verify credentials first
+  try {
+    const me = await client.v1.verifyCredentials();
+    console.log(`✅ Authenticated as @${me.screen_name}`);
+  } catch (e) {
+    console.error('❌ Auth verification failed:', e.data?.detail || e.message);
+    console.error('   Check that API Key/Secret and Access Token/Secret are correct');
+    console.error('   and that app permissions are "Read and Write"');
+    process.exit(1);
+  }
+
+  // Post thread using v1.1 statuses/update (more compatible with Free tier)
   let replyTo = null;
   for (let i = 0; i < THREAD.length; i++) {
-    const options = replyTo ? { reply: { in_reply_to_tweet_id: replyTo } } : {};
-    const result = await client.v2.tweet(THREAD[i], options);
-    replyTo = result.data.id;
-    console.log(`✅ Tweet ${i + 1}/${THREAD.length}: ${replyTo}`);
+    const params = { status: THREAD[i] };
+    if (replyTo) params.in_reply_to_status_id = replyTo;
+
+    const result = await client.v1.tweet(THREAD[i], replyTo ? {
+      in_reply_to_status_id: replyTo
+    } : undefined);
+
+    replyTo = result.id_str;
+    console.log(`✅ Tweet ${i + 1}/${THREAD.length}: https://x.com/i/status/${replyTo}`);
   }
 
   console.log(`\n🎉 Thread complete! ${THREAD.length} tweets posted.`);
 }
 
 main().catch(e => {
-  console.error('❌ Failed:', e);
+  console.error('❌ Failed:', e.data?.detail || e.message);
   process.exit(1);
 });
