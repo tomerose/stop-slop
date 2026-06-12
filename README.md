@@ -143,21 +143,17 @@ stop-slop/
 - **培训**（团队写作工作坊）
 - **API 集成**（批量文本检测）
 
-→ 邮件 portelamicheli636@gmail.com 或微信见下方赞赏码。
+→ 邮件 portelamicheli636@gmail.com
 
 ---
 
-## 赞助
+## 支持作者
 
-如果这个 skill 帮你省了改稿时间，请我喝杯咖啡 ☕
+如果这个 skill 帮你省了改稿时间：
 
-<div align="center">
-
-| 微信赞赏 | 支付宝 |
-|----------|--------|
-| *(扫码)* | *(扫码)* |
-
-</div>
+- **GitHub Sponsors**: [赞助](https://github.com/sponsors/tomerose)
+- **微信/支付宝**: 发送邮件到 portelamicheli636@gmail.com 获取收款码
+- **Star this repo**: 不花钱，点个 Star 就是最大支持 ⭐
 
 ---
 
